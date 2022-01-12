@@ -1,0 +1,473 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Northern Brooklyn KSI Study"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### Output should be table with all the streets within region and KSI statistics in that region\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "####### Steps: \n",
+    "\n",
+    "####### 1. Convert the shapefile into a table with geometry\n",
+    "####### 2. Spatial join the shapefile with nysdot_all injury data\n",
+    "####### 3. Retrieve table with injury severity statistics that overlap with selected region\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 91,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Notebook run: 2019-06-12 18:43\n"
+     ]
+    }
+   ],
+   "source": [
+    "from ris import db2\n",
+    "from ris import pg_import_export_shps as shp\n",
+    "from IPython.display import clear_output\n",
+    "import datetime\n",
+    "from functools import reduce\n",
+    "import pandas as pd\n",
+    "from pandas import DataFrame\n",
+    "from pandas import ExcelWriter\n",
+    "import numpy as np\n",
+    "import os\n",
+    "\n",
+    "\n",
+    "clear_output()\n",
+    "timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')\n",
+    "print 'Notebook run: {}'.format(timestamp)\n",
+    "\n",
+    "# %load_ext sql "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "User name (CRASHDATA):soge\n",
+      "Password (CRASHDATA)········\n"
+     ]
+    }
+   ],
+   "source": [
+    "#db = db2.PostgresDb('dotdevpgsql02', 'GISGRID', quiet = True)\n",
+    "db = db2.PostgresDb('dotdevpgsql02', 'CRASHDATA', quiet = True)\n",
+    "#exporting study area to pg database\n",
+    "shp.import_shp_to_pg('C:\\Users\\soge\\Desktop\\Jupyter\\Shps\\Northern_Brooklyn_Study_Area\\Study_Area.shp', db, schema='working', precision=False, \n",
+    "                     permission=True, gdal_data=r\"C:\\Program Files (x86)\\GDAL\\gdal-data\") \n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 80,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "User name (CRASHDATA):soge\n",
+      "Password (CRASHDATA)········\n",
+      "   severity  cnt\n",
+      "0         A  535\n",
+      "1        AA   21\n",
+      "2       AAA    5\n",
+      "3     AAAAA    1\n",
+      "4     AAACC    2\n",
+      "5       AAB    1\n",
+      "6      AABC    1\n",
+      "7       AAC    2\n",
+      "8        AB    7\n",
+      "9       ABB    3\n",
+      "10      ABC    3\n",
+      "11    ABCCC    2\n",
+      "12       AC   29\n",
+      "13      ACA    1\n",
+      "14     ACBB    1\n",
+      "15     ACBC    1\n",
+      "16      ACC    6\n",
+      "17     ACCC    6\n",
+      "18    ACXCB    1\n",
+      "19     ACXX    1\n",
+      "20       AK    1\n",
+      "21       BA    1\n",
+      "22     BBBA    1\n",
+      "23       CA    4\n",
+      "24     CAAA    1\n",
+      "25      CAB    1\n",
+      "26    CABCC    2\n",
+      "27      CAC    2\n",
+      "28     CACC    2\n",
+      "29    CACCC    1\n",
+      "30      CCA    1\n",
+      "31     CCAC    1\n",
+      "32       KA    1\n",
+      "33     KABA    1\n"
+     ]
+    }
+   ],
+   "source": [
+    "\n",
+    "pgdb = db2.PostgresDb('dotdevpgsql02', 'CRASHDATA', quiet = True) #data connection\n",
+    "qry = (db2.query_to_table(pgdb, \"\"\"\n",
+    "                                select inj as severity, count(inj) as cnt\n",
+    "                                from (\n",
+    "                                SELECT b.ext_of_inj inj, b.geom\n",
+    "                                FROM working.study_area a \n",
+    "                                join public.nysdot_all b\n",
+    "                                on ST_DWithin(a.wkb_geometry, b.geom, 2)\n",
+    "                                where ext_of_inj is not null\n",
+    "                                and (ext_of_inj) like '%A%'\n",
+    "                                ) c\n",
+    "                                group by inj\n",
+    "\n",
+    "                            \"\"\")\n",
+    "              )\n",
+    "print(qry)\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 81,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "('A', 535)\n",
+      "('AA', 21)\n",
+      "('AAA', 5)\n",
+      "('AAAAA', 1)\n",
+      "('AAACC', 2)\n",
+      "('AAB', 1)\n",
+      "('AABC', 1)\n",
+      "('AAC', 2)\n",
+      "('AB', 7)\n",
+      "('ABB', 3)\n",
+      "('ABC', 3)\n",
+      "('ABCCC', 2)\n",
+      "('AC', 29)\n",
+      "('ACA', 1)\n",
+      "('ACBB', 1)\n",
+      "('ACBC', 1)\n",
+      "('ACC', 6)\n",
+      "('ACCC', 6)\n",
+      "('ACXCB', 1)\n",
+      "('ACXX', 1)\n",
+      "('AK', 1)\n",
+      "('BA', 1)\n",
+      "('BBBA', 1)\n",
+      "('CA', 4)\n",
+      "('CAAA', 1)\n",
+      "('CAB', 1)\n",
+      "('CABCC', 2)\n",
+      "('CAC', 2)\n",
+      "('CACC', 2)\n",
+      "('CACCC', 1)\n",
+      "('CCA', 1)\n",
+      "('CCAC', 1)\n",
+      "('KA', 1)\n",
+      "('KABA', 1)\n"
+     ]
+    }
+   ],
+   "source": [
+    "for i,j in zip(qry.severity,qry.cnt):\n",
+    "    print(i,j)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 82,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "A\n",
+      "AA\n",
+      "AAA\n",
+      "AAAAA\n",
+      "AAACC\n",
+      "AAB\n",
+      "AABC\n",
+      "AAC\n",
+      "AB\n",
+      "ABB\n",
+      "ABC\n",
+      "ABCCC\n",
+      "AC\n",
+      "ACA\n",
+      "ACBB\n",
+      "ACBC\n",
+      "ACC\n",
+      "ACCC\n",
+      "ACXCB\n",
+      "ACXX\n",
+      "AK\n",
+      "BA\n",
+      "BBBA\n",
+      "CA\n",
+      "CAAA\n",
+      "CAB\n",
+      "CABCC\n",
+      "CAC\n",
+      "CACC\n",
+      "CACCC\n",
+      "CCA\n",
+      "CCAC\n",
+      "KA\n",
+      "KABA\n"
+     ]
+    }
+   ],
+   "source": [
+    "for i in qry.severity:\n",
+    "    print i\n",
+    "    \n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 83,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "A 1\n",
+      "AA 2\n",
+      "AAA 3\n",
+      "AAAAA 5\n",
+      "AAACC 3\n",
+      "AAB 2\n",
+      "AABC 2\n",
+      "AAC 2\n",
+      "AB 1\n",
+      "ABB 1\n",
+      "ABC 1\n",
+      "ABCCC 1\n",
+      "AC 1\n",
+      "ACA 2\n",
+      "ACBB 1\n",
+      "ACBC 1\n",
+      "ACC 1\n",
+      "ACCC 1\n",
+      "ACXCB 1\n",
+      "ACXX 1\n",
+      "AK 1\n",
+      "BA 1\n",
+      "BBBA 1\n",
+      "CA 1\n",
+      "CAAA 3\n",
+      "CAB 1\n",
+      "CABCC 1\n",
+      "CAC 1\n",
+      "CACC 1\n",
+      "CACCC 1\n",
+      "CCA 1\n",
+      "CCAC 1\n",
+      "KA 1\n",
+      "KABA 2\n",
+      "34\n"
+     ]
+    }
+   ],
+   "source": [
+    "count=0\n",
+    "for i in qry.severity:\n",
+    "    if 'A' in i:\n",
+    "        print i, i.count('A')\n",
+    "        count+=1\n",
+    "print(count)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 84,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "535\n",
+      "21\n",
+      "5\n",
+      "1\n",
+      "2\n",
+      "1\n",
+      "1\n",
+      "2\n",
+      "7\n",
+      "3\n",
+      "3\n",
+      "2\n",
+      "29\n",
+      "1\n",
+      "1\n",
+      "1\n",
+      "6\n",
+      "6\n",
+      "1\n",
+      "1\n",
+      "1\n",
+      "1\n",
+      "1\n",
+      "4\n",
+      "1\n",
+      "1\n",
+      "2\n",
+      "2\n",
+      "2\n",
+      "1\n",
+      "1\n",
+      "1\n",
+      "1\n",
+      "1\n"
+     ]
+    }
+   ],
+   "source": [
+    "for i in qry.cnt:\n",
+    "    print i"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 85,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "('A', 535, 535)\n",
+      "('AA', 21, 42)\n",
+      "('AAA', 5, 15)\n",
+      "('AAAAA', 1, 5)\n",
+      "('AAACC', 2, 6)\n",
+      "('AAB', 1, 2)\n",
+      "('AABC', 1, 2)\n",
+      "('AAC', 2, 4)\n",
+      "('AB', 7, 7)\n",
+      "('ABB', 3, 3)\n",
+      "('ABC', 3, 3)\n",
+      "('ABCCC', 2, 2)\n",
+      "('AC', 29, 29)\n",
+      "('ACA', 1, 2)\n",
+      "('ACBB', 1, 1)\n",
+      "('ACBC', 1, 1)\n",
+      "('ACC', 6, 6)\n",
+      "('ACCC', 6, 6)\n",
+      "('ACXCB', 1, 1)\n",
+      "('ACXX', 1, 1)\n",
+      "('AK', 1, 1)\n",
+      "('BA', 1, 1)\n",
+      "('BBBA', 1, 1)\n",
+      "('CA', 4, 4)\n",
+      "('CAAA', 1, 3)\n",
+      "('CAB', 1, 1)\n",
+      "('CABCC', 2, 2)\n",
+      "('CAC', 2, 2)\n",
+      "('CACC', 2, 2)\n",
+      "('CACCC', 1, 1)\n",
+      "('CCA', 1, 1)\n",
+      "('CCAC', 1, 1)\n",
+      "('KA', 1, 1)\n",
+      "('KABA', 1, 2)\n"
+     ]
+    }
+   ],
+   "source": [
+    "for i,j in zip(qry.severity, qry.cnt):\n",
+    "    if 'A' in i:\n",
+    "        print(i,j,j*i.count('A'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 86,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "696\n"
+     ]
+    }
+   ],
+   "source": [
+    "sev_sum = 0 \n",
+    "for i,j in zip(qry.severity, qry.cnt):\n",
+    "    if 'A' in i:\n",
+    "        #print(i,j,j*i.count('A'))\n",
+    "        sev_sum+=j*i.count('A')\n",
+    "print(sev_sum)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df.to_csv('example.csv',index=False)"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 2",
+   "language": "python",
+   "name": "python2"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 2
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython2",
+   "version": "2.7.10"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

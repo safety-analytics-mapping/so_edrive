@@ -1,0 +1,6 @@
+on,from,to,borough,other info,project_id
+queens blvd,50 st,broadway,QN,sample,1
+34 st,10 ave,3rd ave,M,sample2,2
+1st avenue,w 40 st,e 45 st,M,sample3,3
+34 st,10 ave,1st ave,M,sample4,4
+w 34 st,10 ave,1 ave,M,sample5,5

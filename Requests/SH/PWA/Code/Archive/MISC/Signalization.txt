@@ -1,0 +1,59 @@
+Questions To Answer:
+
+What qualifies a signal
+
+What disqualifies a signal
+
+Time frame that signal can be revisited
+
+1.
+So the code calls the databases first:
+pgo = Dc.PGConnection('CRASHDATA', 'shostetter')
+dbo = Dc.DBConnection('dotgissql01', 'gisgrid', 'GISUSER', 'GISUSER')
+dbo2 = Dc.DBConnection('DOTDEV55SQL02', 'DataWarehouse', 'SHostetter', 'shostetter')
+
+2.
+then it gathers all the nodes:
+node_dict = get_intersection_universe(pgo)
+
+3.
+then it gathers all of the signalized nodes:
+node_dict = alt_get_signalized_int(dbo, pgo, node_dict)
+
+4.
+the it gathers all of the master nodes for the signalized nodes:
+masters = get_unsignalized_masterids(node_dict) 
+
+5.
+then it gathers all of the crashes from the datawarehouse (sql server):
+crash_list = get_all_crashes_nypd(dbo2)
+
+6.
+Next it gathers all of the right angle crashes:
+drac = get_all_dir_right_angle_crashes_nypd(dbo2)
+
+7.
+Next intersection objects are added to the masters ditionary:
+add_intersection_objects_to_master_dict(masters)
+
+8.
+Then adds the crashes to the intersection
+add_crashes_to_intersections(node_dict, masters, crash_list, drac)
+
+9.
+approved_masters = approved_intersections(masters)
+
+10.
+node_data = get_node_details(pgo)
+
+11.
+headers, crash_data = intersection_summaries(approved_masters, masters, node_data)
+
+
+
+
+NYPD Data uses nodes
+
+If any one of the nodes are signalized then the masters are signalized
+
+State Data uses masterids because it uses Clion

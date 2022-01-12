@@ -1,0 +1,386 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Default Import"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/markdown": [
+       "<strong>Notebook run on: 2021-06-16 13:26 | by soge | Using ris library version: 2.2.1 | File Location: E:\\RIS\\Staff Folders\\Samuel\\Requests\\SH\\HBKBQE"
+      ],
+      "text/plain": [
+       "<IPython.core.display.Markdown object>"
+      ]
+     },
+     "execution_count": 1,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from ris import pysqldb\n",
+    "from IPython.display import Markdown, clear_output\n",
+    "from sqlalchemy import create_engine\n",
+    "import ris\n",
+    "import getpass\n",
+    "import datetime \n",
+    "import pandas as pd\n",
+    "import numpy as np\n",
+    "import os\n",
+    "import requests\n",
+    "\n",
+    "timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')\n",
+    "ts = datetime.datetime.now().strftime('%Y-%m-%d')\n",
+    "\n",
+    "Markdown('<strong>Notebook run on: {} | by {} | Using ris library version: {} | File Location: {}'.format(\n",
+    "    timestamp, getpass.getuser(), ris.__version__, os.getcwd()\n",
+    "))\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Db connections"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "\n",
+      "Additional database connection details required:\n",
+      "User name (ris):soge\n",
+      "Password (ris)········\n"
+     ]
+    }
+   ],
+   "source": [
+    "try: \n",
+    "    db.params['user']\n",
+    "except:\n",
+    "    db = pysqldb.DbConnect(type='PG', server='dotdevrhpgsql01', database='ris')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "data =pd.read_excel('BQE Four Crossings Crash Data Request.xlsx')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### NODES Verification"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "y = len(data[data.columns[3::]][1:]) #matrix of all nodes without descriptive columns\n",
+    "l = list()\n",
+    "\n",
+    "# separating all nodes from nan values\n",
+    "for i in range(y):\n",
+    "    \n",
+    "    for j in data[data.columns[3::]][1:].iloc[i]:\n",
+    "        \n",
+    "        \n",
+    "        if str(j) != 'nan':\n",
+    "            \n",
+    "             l.append(j)\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {
+    "scrolled": false
+   },
+   "outputs": [],
+   "source": [
+    "nodes = tuple(map(int,l))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "lion_nodes = db.dfquery(\"\"\" SELECT DISTINCT nodeid FROM node\n",
+    "                            WHERE nodeid in {} \n",
+    "                            \"\"\".format(nodes))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "{15755, 90598, 90601}"
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# set of nodes not in node table\n",
+    "hbkbqe_nodes = set(nodes) - set(map(int,set(lion_nodes.nodeid))) \n",
+    "hbkbqe_nodes"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Updating nodeids "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Removing incorrect nodes\n",
+    "ln = map(int,list(lion_nodes.nodeid))\n",
+    "ln.remove(90358)\n",
+    "\n",
+    "# Appending correct nodes\n",
+    "ln.append(103538)\n",
+    "ln.append(103539)\n",
+    "ln.append(105928)\n",
+    "ln = tuple(ln)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Reference Markers Verification"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "ref_mkr=pd.read_excel('BQE Four Crossings Crash Data Request.xlsx', sheet_name= 'Reference Marker')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "markers = tuple(map(str,list(ref_mkr[ref_mkr.columns[6]][2:])))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "('278IX2M23089', '278IX2M24089', '278IX2M23088', '278IX2M24088', '278IX2M23087', '278IX2M24087', '278IX2M23086', '278IX2M24086', '278IX2M23085', '278IX2M24085', '278IX2M23084', '278IX2M24084', '278IX2M23083', '278IX2M24083', '278IX2M23082', '278IX2M24082', '278IX2M23081', '278IX2M24081', '278IX2M23080', '278IX2M24080', '278IX2M23079', '278IX2M24079', '278IX2M23078', '278IX2M24078')\n"
+     ]
+    }
+   ],
+   "source": [
+    "print markers"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "ris_markers = db.dfquery(\"\"\"SELECT distinct l.segmentid,panel, l.geom\n",
+    "                            FROM public.cscl_referencemarker rm\n",
+    "                            JOIN lion l\n",
+    "                            on rm.segmentid::int = l.segmentid::int\n",
+    "                            WHERE panel in {}\n",
+    "                             \"\"\".format(markers))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "rm_segs = tuple(map(int,list(ris_markers.segmentid)))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "diff = set(ris_markers.panel) - set(markers)\n",
+    "diff"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### NYSDOT Data"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "raw_crashes = db.dfquery(\"\"\"SELECT ogc_fid, gid, case_num, case_yr, ref_mrkr, accd_dte, road_sys, \n",
+    "                                   num_of_fat, num_of_inj, reportable, police_dep, intersect_, muni, \n",
+    "                                   precinct, num_of_veh, accd_typ, locn, traf_cntl, light_cond, \n",
+    "                                   weather, road_char, road_surf_, collision_, ped_loc, ped_actn, \n",
+    "                                   ext_of_inj, regn_cnty_, accd_tme, rpt_agcy, dmv_accd_c, traf_way, \n",
+    "                                   rdway_acc_, err_cde, comm_veh_a, highway_in, intersect1, utm_northi, \n",
+    "                                   utm_eastin, crashid  \n",
+    "                            FROM nysdot_all\n",
+    "                            WHERE (nodeid::int in {n} or segmentid::int in {m})\n",
+    "                            and case_yr::int between 2016 and 2018\n",
+    "                            \"\"\".format(n=ln, m=rm_segs))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "raw_crashes = db.dfquery(\"\"\" SELECT    ogc_fid, gid, case_num, case_yr, ref_mrkr, accd_dte, road_sys, \n",
+    "                                       num_of_fat, num_of_inj, reportable, police_dep, intersect_, muni, \n",
+    "                                       precinct, num_of_veh, accd_typ, locn, traf_cntl, light_cond, \n",
+    "                                       weather, road_char, road_surf_, collision_, ped_loc, ped_actn, \n",
+    "                                       ext_of_inj, regn_cnty_, accd_tme, rpt_agcy, dmv_accd_c, traf_way, \n",
+    "                                       rdway_acc_, err_cde, comm_veh_a, highway_in, intersect1, utm_northi, \n",
+    "                                       utm_eastin, crashid  \n",
+    "                             FROM nysdot_all\n",
+    "                             WHERE ref_mrkr in {}\n",
+    "                             and case_yr::int between 2016 and 2018\n",
+    "                            \n",
+    "                            \"\"\".format(markers))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#crashids\n",
+    "rc = tuple(list(raw_crashes.crashid))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "raw_vehicle = db.dfquery(\"\"\"SELECT *  \n",
+    "                            FROM nysdot_vehicle\n",
+    "                            WHERE crashid in {c}\n",
+    "                            and case_yr between 2016 and 2018\n",
+    "                            \"\"\".format(c=rc))\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "raw_contributing = db.dfquery(\"\"\"SELECT *  \n",
+    "                                 FROM nysdot_appfactor\n",
+    "                                 WHERE crashid in {c}\n",
+    "                                 and case_yr between 2016 and 2018\n",
+    "                                 \"\"\".format(c=rc))\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "raw_crashes.to_csv('hbkbqe_raw_crashes.csv',index=False)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "raw_vehicle.to_csv('hbkbqe_raw_vehicle.csv',index=False)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "raw_contributing.to_csv('hbkbqe_raw_contributing.csv',index=False)"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 2",
+   "language": "python",
+   "name": "python2"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 2
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython2",
+   "version": "2.7.16"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

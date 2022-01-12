@@ -1,0 +1,134 @@
+<Layout units="mm" worldFileMap="{f71e4af4-cc35-439c-ba0b-5dac860432a0}" printResolution="300" name="Layout 2">
+ <Snapper snapToItems="1" tolerance="5" snapToGuides="1" snapToGrid="0"/>
+ <Grid resolution="10" offsetUnits="mm" resUnits="mm" offsetX="0" offsetY="0"/>
+ <PageCollection>
+  <symbol alpha="1" clip_to_extent="1" type="fill" force_rhr="0" name="">
+   <layer enabled="1" class="SimpleFill" pass="0" locked="0">
+    <prop k="border_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+    <prop k="color" v="255,255,255,255"/>
+    <prop k="joinstyle" v="miter"/>
+    <prop k="offset" v="0,0"/>
+    <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+    <prop k="offset_unit" v="MM"/>
+    <prop k="outline_color" v="35,35,35,255"/>
+    <prop k="outline_style" v="no"/>
+    <prop k="outline_width" v="0.26"/>
+    <prop k="outline_width_unit" v="MM"/>
+    <prop k="style" v="solid"/>
+    <data_defined_properties>
+     <Option type="Map">
+      <Option value="" type="QString" name="name"/>
+      <Option name="properties"/>
+      <Option value="collection" type="QString" name="type"/>
+     </Option>
+    </data_defined_properties>
+   </layer>
+  </symbol>
+  <LayoutItem groupUuid="" uuid="{a5350a42-3fdd-4cea-9b84-9566d231dfbe}" referencePoint="0" zValue="0" outlineWidthM="0.3,mm" opacity="1" positionLock="false" excludeFromExports="0" itemRotation="0" id="" templateUuid="{a5350a42-3fdd-4cea-9b84-9566d231dfbe}" blendMode="0" frame="false" position="0,0,mm" frameJoinStyle="miter" visibility="1" background="true" size="297,210,mm" type="65638" positionOnPage="0,0,mm">
+   <FrameColor red="0" alpha="255" green="0" blue="0"/>
+   <BackgroundColor red="255" alpha="255" green="255" blue="255"/>
+   <LayoutObject>
+    <dataDefinedProperties>
+     <Option type="Map">
+      <Option value="" type="QString" name="name"/>
+      <Option name="properties"/>
+      <Option value="collection" type="QString" name="type"/>
+     </Option>
+    </dataDefinedProperties>
+    <customproperties/>
+   </LayoutObject>
+  </LayoutItem>
+  <GuideCollection visible="1">
+   <Guide position="0" orientation="1" units="mm" page="0"/>
+   <Guide position="297" orientation="2" units="mm" page="0"/>
+   <Guide position="0" orientation="2" units="mm" page="0"/>
+   <Guide position="209" orientation="1" units="mm" page="0"/>
+  </GuideCollection>
+ </PageCollection>
+ <LayoutItem groupUuid="" htmlState="0" marginY="0" uuid="{74273a64-485e-4db6-9ca1-927db5f97e12}" referencePoint="0" zValue="3" labelText="NYC Deads Ends by Borough" outlineWidthM="0.3,mm" marginX="0" opacity="1" positionLock="false" excludeFromExports="0" itemRotation="0" id="" templateUuid="{74273a64-485e-4db6-9ca1-927db5f97e12}" blendMode="0" frame="false" valign="32" position="38.4292,16.6702,mm" frameJoinStyle="miter" visibility="1" background="false" size="139.152,14.5645,mm" type="65641" positionOnPage="38.4292,16.6702,mm" halign="8">
+  <FrameColor red="0" alpha="255" green="0" blue="0"/>
+  <BackgroundColor red="255" alpha="255" green="255" blue="255"/>
+  <LayoutObject>
+   <dataDefinedProperties>
+    <Option type="Map">
+     <Option value="" type="QString" name="name"/>
+     <Option name="properties"/>
+     <Option value="collection" type="QString" name="type"/>
+    </Option>
+   </dataDefinedProperties>
+   <customproperties/>
+  </LayoutObject>
+  <LabelFont description="MS Shell Dlg 2,28,-1,5,50,0,0,0,0,0,Regular" style="Regular"/>
+  <FontColor red="0" green="0" blue="0"/>
+ </LayoutItem>
+ <LayoutItem columnSpace="2" id="" legendFilterByAtlas="0" fontColor="#000000" boxSpace="2" zValue="2" frame="false" positionOnPage="58.258,64.0486,mm" resizeToContents="1" visibility="1" background="true" map_uuid="{f71e4af4-cc35-439c-ba0b-5dac860432a0}" title="" type="65642" lineSpacing="1" frameJoinStyle="miter" size="53.9,50.7,mm" rasterBorderWidth="0" blendMode="0" groupUuid="" wmsLegendWidth="50" columnCount="1" titleAlignment="1" symbolWidth="7" templateUuid="{c2724c62-1234-48f0-96ce-ac78946a1d7d}" equalColumnWidth="0" referencePoint="0" rasterBorderColor="0,0,0,255" excludeFromExports="0" splitLayer="0" symbolHeight="4" opacity="1" wmsLegendHeight="25" rasterBorder="1" positionLock="false" position="58.258,64.0486,mm" uuid="{c2724c62-1234-48f0-96ce-ac78946a1d7d}" itemRotation="0" wrapChar="" outlineWidthM="0.3,mm">
+  <FrameColor red="0" alpha="255" green="0" blue="0"/>
+  <BackgroundColor red="240" alpha="255" green="240" blue="240"/>
+  <LayoutObject>
+   <dataDefinedProperties>
+    <Option type="Map">
+     <Option value="" type="QString" name="name"/>
+     <Option name="properties"/>
+     <Option value="collection" type="QString" name="type"/>
+    </Option>
+   </dataDefinedProperties>
+   <customproperties/>
+  </LayoutObject>
+  <styles>
+   <style marginBottom="3.5" name="title">
+    <styleFont description="MS Shell Dlg 2,16,-1,5,50,0,0,0,0,0" style=""/>
+   </style>
+   <style marginTop="3" name="group">
+    <styleFont description="MS Shell Dlg 2,14,-1,5,50,0,0,0,0,0" style=""/>
+   </style>
+   <style marginTop="3" name="subgroup">
+    <styleFont description="MS Shell Dlg 2,12,-1,5,50,0,0,0,0,0" style=""/>
+   </style>
+   <style marginTop="2.5" name="symbol">
+    <styleFont description="MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0" style=""/>
+   </style>
+   <style marginLeft="2" marginTop="2" name="symbolLabel">
+    <styleFont description="MS Shell Dlg 2,12,-1,5,50,0,0,0,0,0" style=""/>
+   </style>
+  </styles>
+  <layer-tree-group>
+   <customproperties/>
+   <layer-tree-layer checked="Qt::Checked" providerKey="postgres" id="districts_boroughs_ff2ff1c7_1b65_4a55_8223_7ff6329f3667" expanded="1" source="dbname='CRASHDATA' host=dotdevpgsql02.dot.nycnet port=5432 user='soge' sslmode=disable key='gid' srid=2263 type=MultiPolygon table=&quot;public&quot;.&quot;districts_boroughs&quot; (geom) sql=" name="districts_boroughs">
+    <customproperties>
+     <property value="Bronx 14%" key="legend/label-0"/>
+     <property value="Brooklyn 13%" key="legend/label-1"/>
+     <property value="Manhattan 4.5%" key="legend/label-2"/>
+     <property value="Queens 30%" key="legend/label-3"/>
+     <property value="Staten Island 37%" key="legend/label-4"/>
+     <property value="Total 4263 Dead Ends" key="legend/label-5"/>
+     <property value="0,1,2,3,4,5" key="legend/node-order"/>
+     <property value="Dead End Distribution" key="legend/title-label"/>
+    </customproperties>
+   </layer-tree-layer>
+   <custom-order enabled="0">
+    <item>districts_boroughs_ff2ff1c7_1b65_4a55_8223_7ff6329f3667</item>
+   </custom-order>
+  </layer-tree-group>
+ </LayoutItem>
+ <LayoutItem groupUuid="" uuid="{f71e4af4-cc35-439c-ba0b-5dac860432a0}" referencePoint="0" zValue="1" outlineWidthM="0.3,mm" keepLayerSet="false" opacity="1" drawCanvasItems="true" positionLock="false" excludeFromExports="0" itemRotation="0" id="" templateUuid="{f71e4af4-cc35-439c-ba0b-5dac860432a0}" blendMode="0" mapRotation="0" frame="false" position="-32.5932,-60.5709,mm" frameJoinStyle="miter" visibility="1" followPresetName="" followPreset="false" background="true" size="454.187,321.142,mm" type="65639" positionOnPage="-32.5932,-60.5709,mm">
+  <FrameColor red="0" alpha="255" green="0" blue="0"/>
+  <BackgroundColor red="255" alpha="255" green="255" blue="255"/>
+  <LayoutObject>
+   <dataDefinedProperties>
+    <Option type="Map">
+     <Option value="" type="QString" name="name"/>
+     <Option name="properties"/>
+     <Option value="collection" type="QString" name="type"/>
+    </Option>
+   </dataDefinedProperties>
+   <customproperties/>
+  </LayoutObject>
+  <Extent ymin="78658.45572239448665641" xmin="845316.08128687995485961" xmax="1189704.97238836693577468" ymax="322165.75246081955265254"/>
+  <LayerSet/>
+  <AtlasMap atlasDriven="0" margin="0.10000000000000001" scalingMode="2"/>
+ </LayoutItem>
+ <customproperties>
+  <property value="png" key="atlasRasterFormat"/>
+ </customproperties>
+ <Atlas enabled="0" filenamePattern="'output_'||@atlas_featurenumber" sortFeatures="0" pageNameExpression="" filterFeatures="0" hideCoverage="0" coverageLayer=""/>
+</Layout>
